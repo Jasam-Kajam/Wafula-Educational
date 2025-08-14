@@ -1,0 +1,145 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mpasho — Entertainment & Lifestyle (Firebase Version)</title>
+  <meta name="description" content="A responsive entertainment/news magazine template inspired by Mpasho.co.ke, now powered by Firebase." />
+  <style>
+    :root{
+      --accent:#e11d48;
+      --muted:#6b7280;
+      --bg:#0f172a;
+      --card:#0b1220;
+      --glass: rgba(255,255,255,0.03);
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial; margin:0; background:linear-gradient(180deg,#020617 0%, #071029 100%); color:#e6eef8;}
+    header{backdrop-filter:blur(6px); background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-bottom:1px solid rgba(255,255,255,0.03); position:sticky; top:0; z-index:40}
+    .container{max-width:1150px; margin:0 auto; padding:18px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{font-weight:800; font-size:20px; letter-spacing:-0.5px; color:white}
+    nav{display:flex; gap:16px; align-items:center}
+    .topbar{display:flex; justify-content:space-between; align-items:center}
+    .navlinks a{color:var(--muted); text-decoration:none; font-weight:600; padding:8px 10px; border-radius:8px}
+    .navlinks a:hover{color:white; background:var(--glass)}
+    .hero{display:grid; grid-template-columns:2fr 1fr; gap:18px; margin-top:18px}
+    .hero-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:18px; border-radius:10px; box-shadow: 0 6px 18px rgba(2,6,23,0.6)}
+    .hero img{width:100%; height:320px; object-fit:cover; border-radius:8px}
+    .meta{font-size:13px; color:var(--muted); margin-top:8px}
+    .title{font-size:22px; font-weight:700; margin-top:8px}
+    .excerpt{color:#cbd5e1; margin-top:10px}
+    .list-card{display:flex; gap:12px; margin-bottom:12px}
+    .list-card img{width:110px; height:70px; object-fit:cover; border-radius:6px}
+    .list-card .list-info{flex:1}
+    .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:20px}
+    .article{background:var(--card); border-radius:10px; overflow:hidden}
+    .article img{width:100%; height:160px; object-fit:cover}
+    .article .body{padding:12px}
+    .kicker{font-size:12px; color:var(--muted); font-weight:700}
+    .article h3{margin:8px 0 0; font-size:16px}
+    footer{margin-top:30px; padding:20px; color:var(--muted); text-align:center}
+    @media (max-width:1000px){.hero{grid-template-columns:1fr} .grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:640px){.navlinks{display:none} .grid{grid-template-columns:1fr} .hero img{height:220px}}
+    .btn{background:var(--accent); color:white; padding:8px 12px; border-radius:8px; text-decoration:none; font-weight:700}
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container topbar">
+      <div style="display:flex; align-items:center; gap:18px">
+        <div class="brand">
+          <div class="logo">Mpasho<span style="color:var(--accent)">.</span></div>
+        </div>
+        <div class="search" style="display:flex; align-items:center">
+          <input aria-label="Search" placeholder="Search articles" style="background:transparent; border:1px solid rgba(255,255,255,0.03); padding:8px 10px; border-radius:8px; color:inherit" />
+        </div>
+      </div>
+      <nav class="navlinks">
+        <a href="#">Home</a>
+        <a href="#">Entertainment</a>
+        <a href="#">News</a>
+        <a href="#">Lifestyle</a>
+        <a href="#">Events</a>
+        <a class="btn" href="#">Subscribe</a>
+      </nav>
+    </div>
+  </header>  <main class="container">
+    <section class="hero">
+      <article class="hero-card">
+        <img src="" alt="Hero image" />
+        <div class="meta"></div>
+        <h1 class="title"></h1>
+        <p class="excerpt"></p>
+      </article>
+      <aside>
+        <div class="hero-card" style="padding:12px">
+          <h3 style="margin:0 0 12px">Most Read</h3>
+          <div id="most-read"></div>
+        </div>
+      </aside>
+    </section><section class="grid" aria-label="Latest articles"></section>
+
+<footer>
+  <div style="max-width:900px; margin:0 auto">
+    <p style="margin:6px 0">© 2025 Mpasho — Firebase-powered demo. Replace all placeholder text and images with your original content.</p>
+    <p class="muted" style="font-size:13px">Built with plain HTML/CSS + Firebase Firestore.</p>
+  </div>
+</footer>
+
+  </main>  <!-- Firebase -->  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js"></script>  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAwAxP-MWwNnKP59PA6joil4Ceq10eozlc",
+      authDomain: "wafula-s-educational-posts.firebaseapp.com",
+      projectId: "wafula-s-educational-posts"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function loadPosts() {
+      const snapshot = await db.collection("posts").orderBy("date", "desc").limit(10).get();
+      const posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      if (posts.length > 0) {
+        const hero = posts[0];
+        document.querySelector(".hero img").src = hero.imageURL;
+        document.querySelector(".hero .title").textContent = hero.title;
+        document.querySelector(".hero .excerpt").textContent = hero.excerpt;
+        document.querySelector(".hero .meta").textContent = `${hero.category} • ${new Date(hero.date.seconds * 1000).toLocaleDateString()}`;
+      }
+
+      const grid = document.querySelector(".grid");
+      grid.innerHTML = "";
+      posts.slice(1).forEach(post => {
+        grid.innerHTML += `
+          <article class="article">
+            <img src="${post.imageURL}" alt="article image" />
+            <div class="body">
+              <div class="kicker">${post.category}</div>
+              <h3>${post.title}</h3>
+              <div class="muted" style="margin-top:8px">${new Date(post.date.seconds * 1000).toLocaleDateString()}</div>
+            </div>
+          </article>`;
+      });
+
+      const mostRead = document.getElementById("most-read");
+      mostRead.innerHTML = "";
+      posts.slice(0, 3).forEach(post => {
+        mostRead.innerHTML += `
+          <div class="list-card">
+            <img src="${post.imageURL}" alt="thumb" />
+            <div class="list-info">
+              <div class="kicker">${post.category}</div>
+              <div style="font-weight:700">${post.title}</div>
+              <div class="muted" style="font-size:13px">${new Date(post.date.seconds * 1000).toLocaleDateString()}</div>
+            </div>
+          </div>`;
+      });
+    }
+
+    loadPosts();
+  </script></body>
+</html>
