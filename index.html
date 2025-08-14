@@ -1,109 +1,176 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mpasho — Entertainment & Lifestyle (Firebase Version)</title>
-<meta name="description" content="A responsive entertainment/news magazine template inspired by Mpasho.co.ke, now powered by Firebase." />
-<style>
-  :root {
-    --accent: #e11d48;
-    --muted: #6b7280;
-    --bg: #0f172a;
-    --card: #0b1220;
-    --glass: rgba(255, 255, 255, 0.03);
-  }
-  * { box-sizing: border-box; }
-  body {
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    margin: 0;
-    background: linear-gradient(180deg, #020617 0%, #071029 100%);
-    color: #e6eef8;
-  }
-  header {
-    backdrop-filter: blur(6px);
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-bottom: 1px solid rgba(255,255,255,0.03);
-    position: sticky;
-    top: 0;
-    z-index: 40;
-  }
-  .container { max-width: 1150px; margin: 0 auto; padding: 18px; }
-  .topbar { display: flex; justify-content: space-between; align-items: center; }
-  .brand { display: flex; align-items: center; gap: 12px; }
-  .logo { font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: white; }
-  nav { display: flex; gap: 16px; align-items: center; }
-  .navlinks a {
-    color: var(--muted);
-    text-decoration: none;
-    font-weight: 600;
-    padding: 8px 10px;
-    border-radius: 8px;
-  }
-  .navlinks a:hover { color: white; background: var(--glass); }
-  .search-input {
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.03);
-    padding: 8px 10px;
-    border-radius: 8px;
-    color: inherit;
-  }
-  .btn {
-    background: var(--accent);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 700;
-  }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mpasho — Entertainment & Lifestyle (Firebase Version)</title>
+  <meta name="description" content="A responsive entertainment/news magazine template inspired by Mpasho.co.ke, now powered by Firebase." />
+  <style>
+    :root {
+      --accent: #e11d48;
+      --muted: #6b7280;
+      --bg: #0f172a;
+      --card: #0b1220;
+      --glass: rgba(255, 255, 255, 0.03);
+    }
 
-  /* Breaking news ticker */
-  #breaking-news {
-    background: var(--card);
-    overflow: hidden;
-    white-space: nowrap;
-    padding: 10px;
-    margin: 18px 0;
-    border-radius: 8px;
-    position: relative;
-  }
-  #breaking-news a {
-    color: var(--accent);
-    margin-right: 40px;
-    font-weight: 700;
-    text-decoration: none;
-  }
-  #breaking-news span { margin-right: 20px; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      margin: 0;
+      background: linear-gradient(180deg, #020617 0%, #071029 100%);
+      color: #e6eef8;
+    }
 
-  .hero { display: grid; grid-template-columns: 2fr 1fr; gap: 18px; margin-top: 18px; }
-  .hero-card { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding: 18px; border-radius: 10px; box-shadow: 0 6px 18px rgba(2,6,23,0.6); }
-  .hero img { width: 100%; height: 320px; object-fit: cover; border-radius: 8px; }
-  .meta { font-size: 13px; color: var(--muted); margin-top: 8px; }
-  .title { font-size: 22px; font-weight: 700; margin-top: 8px; }
-  .excerpt { color: #cbd5e1; margin-top: 10px; }
+    header {
+      backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
 
-  .list-card { display: flex; gap: 12px; margin-bottom: 12px; }
-  .list-card img { width: 110px; height: 70px; object-fit: cover; border-radius: 6px; }
-  .list-info { flex: 1; }
+    .container { max-width: 1150px; margin: 0 auto; padding: 18px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo { font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: white; }
+    nav { display: flex; gap: 16px; align-items: center; }
 
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 20px; }
-  .article { background: var(--card); border-radius: 10px; overflow: hidden; }
-  .article img { width: 100%; height: 160px; object-fit: cover; }
-  .article .body { padding: 12px; }
-  .kicker { font-size: 12px; color: var(--muted); font-weight: 700; }
-  .article h3 { margin: 8px 0 0; font-size: 16px; }
+    .navlinks a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 8px 10px;
+      border-radius: 8px;
+    }
+    .navlinks a:hover { color: white; background: var(--glass); }
 
-  footer { margin-top: 30px; padding: 20px; color: var(--muted); text-align: center; }
+    .search-input {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.03);
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: inherit;
+    }
 
-  @media (max-width: 1000px) { .hero { grid-template-columns: 1fr; } .grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 640px) { .navlinks { display: none; } .grid { grid-template-columns: 1fr; } .hero img { height: 220px; } }
-</style>
+    .btn {
+      background: var(--accent);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    /* Ticker */
+    .ticker-wrapper {
+      background: #111827;
+      overflow: hidden;
+      border-top: 1px solid rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      padding: 6px 0;
+    }
+    .ticker {
+      display: inline-block;
+      white-space: nowrap;
+      animation: scroll 20s linear infinite;
+    }
+    .ticker a {
+      color: var(--accent);
+      text-decoration: none;
+      margin-right: 40px;
+      font-weight: 600;
+    }
+    .ticker a:hover { text-decoration: underline; }
+    .ticker-wrapper:hover .ticker { animation-play-state: paused; }
+
+    @keyframes scroll {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .hero-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      padding: 18px;
+      border-radius: 10px;
+      box-shadow: 0 6px 18px rgba(2,6,23,0.6);
+    }
+
+    .hero img {
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .meta { font-size: 13px; color: var(--muted); margin-top: 8px; }
+    .title { font-size: 22px; font-weight: 700; margin-top: 8px; }
+    .excerpt { color: #cbd5e1; margin-top: 10px; }
+
+    .list-card { display: flex; gap: 12px; margin-bottom: 12px; }
+    .list-card img {
+      width: 110px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .list-info { flex: 1; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .article {
+      background: var(--card);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .article img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+    }
+    .article .body { padding: 12px; }
+
+    .kicker { font-size: 12px; color: var(--muted); font-weight: 700; }
+    .article h3 { margin: 8px 0 0; font-size: 16px; }
+
+    footer {
+      margin-top: 30px;
+      padding: 20px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 1000px) {
+      .hero { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .navlinks { display: none; }
+      .grid { grid-template-columns: 1fr; }
+      .hero img { height: 220px; }
+    }
+  </style>
 </head>
 <body>
   <header>
     <div class="container topbar">
       <div style="display: flex; align-items: center; gap: 18px;">
-        <div class="brand"><div class="logo">Mpasho<span style="color: var(--accent)">.</span></div></div>
+        <div class="brand">
+          <div class="logo">Mpasho<span style="color: var(--accent)">.</span></div>
+        </div>
         <div class="search">
           <input type="search" class="search-input" aria-label="Search" placeholder="Search articles" />
         </div>
@@ -119,8 +186,9 @@
     </div>
   </header>
 
-  <div class="container">
-    <div id="breaking-news"></div>
+  <!-- News Ticker -->
+  <div class="ticker-wrapper">
+    <div class="ticker" id="news-ticker"></div>
   </div>
 
   <main class="container">
@@ -163,12 +231,13 @@
     const db = getFirestore(app);
 
     function getFirstImage(post) {
-      if (post.images && Array.isArray(post.images) && post.images.length) return post.images[0];
+      if (post.images && Array.isArray(post.images) && post.images.length > 0) return post.images[0];
       if (post.image) return post.image;
       if (post.content) {
-        const temp = document.createElement("div"); temp.innerHTML = post.content;
-        const img = temp.querySelector("img");
-        if (img && img.src) return img.src;
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = post.content;
+        const firstImg = tempDiv.querySelector("img");
+        if (firstImg && firstImg.src) return firstImg.src;
       }
       return "https://via.placeholder.com/600x400?text=No+Image";
     }
@@ -184,32 +253,35 @@
         document.querySelector(".hero .title").textContent = hero.title || "";
         document.querySelector(".hero .excerpt").textContent = hero.excerpt || "";
         document.querySelector(".hero .meta").textContent = 
-          `${hero.category || ""} • ${hero.date?.seconds ? new Date(hero.date.seconds*1000).toLocaleDateString() : ""}`;
+          `${hero.category || ""} • ${hero.date?.seconds ? new Date(hero.date.seconds * 1000).toLocaleDateString() : ""}`;
       }
 
-      document.querySelector(".grid").innerHTML = posts.slice(1).map(post => `
+      const grid = document.querySelector(".grid");
+      grid.innerHTML = posts.slice(1).map(post => `
         <article class="article">
-          <img src="${getFirstImage(post)}" alt="${post.title}" />
+          <img src="${getFirstImage(post)}" alt="${post.title || "Article image"}" />
           <div class="body">
             <div class="kicker">${post.category || ""}</div>
             <h3>${post.title || ""}</h3>
-            <div class="muted" style="margin-top: 8px;">${post.date?.seconds ? new Date(post.date.seconds*1000).toLocaleDateString() : ""}</div>
+            <div class="muted" style="margin-top: 8px;">${post.date?.seconds ? new Date(post.date.seconds * 1000).toLocaleDateString() : ""}</div>
           </div>
         </article>
       `).join("");
 
-      document.getElementById("most-read").innerHTML = posts.slice(0,3).map(post => `
+      const mostRead = document.getElementById("most-read");
+      mostRead.innerHTML = posts.slice(0, 3).map(post => `
         <div class="list-card">
-          <img src="${getFirstImage(post)}" alt="${post.title}" />
+          <img src="${getFirstImage(post)}" alt="${post.title || "Thumbnail"}" />
           <div class="list-info">
             <div class="kicker">${post.category || ""}</div>
-            <div style="font-weight:700;">${post.title || ""}</div>
-            <div class="muted" style="font-size:13px;">${post.date?.seconds ? new Date(post.date.seconds*1000).toLocaleDateString() : ""}</div>
+            <div style="font-weight: 700;">${post.title || ""}</div>
+            <div class="muted" style="font-size: 13px;">${post.date?.seconds ? new Date(post.date.seconds * 1000).toLocaleDateString() : ""}</div>
           </div>
         </div>
       `).join("");
 
-      document.getElementById("breaking-news").innerHTML = posts.map(post => `<a href="#">${post.title}</a>`).join("<span>•</span>");
+      const ticker = document.getElementById("news-ticker");
+      ticker.innerHTML = posts.map(post => `<a href="#">${post.title || "Untitled"} (${post.category || "General"})</a>`).join("");
     }
 
     loadPosts();
