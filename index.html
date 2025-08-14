@@ -14,10 +14,7 @@
       --glass: rgba(255, 255, 255, 0.03);
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       margin: 0;
@@ -34,36 +31,11 @@
       z-index: 40;
     }
 
-    .container {
-      max-width: 1150px;
-      margin: 0 auto;
-      padding: 18px;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo {
-      font-weight: 800;
-      font-size: 20px;
-      letter-spacing: -0.5px;
-      color: white;
-    }
-
-    nav {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-    }
+    .container { max-width: 1150px; margin: 0 auto; padding: 18px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo { font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: white; }
+    nav { display: flex; gap: 16px; align-items: center; }
 
     .navlinks a {
       color: var(--muted);
@@ -72,11 +44,7 @@
       padding: 8px 10px;
       border-radius: 8px;
     }
-
-    .navlinks a:hover {
-      color: white;
-      background: var(--glass);
-    }
+    .navlinks a:hover { color: white; background: var(--glass); }
 
     .search-input {
       background: transparent;
@@ -116,39 +84,18 @@
       border-radius: 8px;
     }
 
-    .meta {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 8px;
-    }
+    .meta { font-size: 13px; color: var(--muted); margin-top: 8px; }
+    .title { font-size: 22px; font-weight: 700; margin-top: 8px; }
+    .excerpt { color: #cbd5e1; margin-top: 10px; }
 
-    .title {
-      font-size: 22px;
-      font-weight: 700;
-      margin-top: 8px;
-    }
-
-    .excerpt {
-      color: #cbd5e1;
-      margin-top: 10px;
-    }
-
-    .list-card {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
+    .list-card { display: flex; gap: 12px; margin-bottom: 12px; }
     .list-card img {
       width: 110px;
       height: 70px;
       object-fit: cover;
       border-radius: 6px;
     }
-
-    .list-info {
-      flex: 1;
-    }
+    .list-info { flex: 1; }
 
     .grid {
       display: grid;
@@ -162,27 +109,15 @@
       border-radius: 10px;
       overflow: hidden;
     }
-
     .article img {
       width: 100%;
       height: 160px;
       object-fit: cover;
     }
+    .article .body { padding: 12px; }
 
-    .article .body {
-      padding: 12px;
-    }
-
-    .kicker {
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 700;
-    }
-
-    .article h3 {
-      margin: 8px 0 0;
-      font-size: 16px;
-    }
+    .kicker { font-size: 12px; color: var(--muted); font-weight: 700; }
+    .article h3 { margin: 8px 0 0; font-size: 16px; }
 
     footer {
       margin-top: 30px;
@@ -192,24 +127,13 @@
     }
 
     @media (max-width: 1000px) {
-      .hero {
-        grid-template-columns: 1fr;
-      }
-      .grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .hero { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: repeat(2, 1fr); }
     }
-
     @media (max-width: 640px) {
-      .navlinks {
-        display: none;
-      }
-      .grid {
-        grid-template-columns: 1fr;
-      }
-      .hero img {
-        height: 220px;
-      }
+      .navlinks { display: none; }
+      .grid { grid-template-columns: 1fr; }
+      .hero img { height: 220px; }
     }
   </style>
 </head>
@@ -274,8 +198,27 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const getFirstImage = (post) => 
-      post.images?.length ? post.images[0] : "https://via.placeholder.com/600x400?text=No+Image";
+    function getFirstImage(post) {
+      // 1. Array field
+      if (post.images && Array.isArray(post.images) && post.images.length > 0) {
+        return post.images[0];
+      }
+      // 2. Single image field
+      if (post.image) {
+        return post.image;
+      }
+      // 3. Extract from HTML content
+      if (post.content) {
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = post.content;
+        const firstImg = tempDiv.querySelector("img");
+        if (firstImg && firstImg.src) {
+          return firstImg.src;
+        }
+      }
+      // 4. Fallback placeholder
+      return "https://via.placeholder.com/600x400?text=No+Image";
+    }
 
     async function loadPosts() {
       const q = query(collection(db, "posts"), orderBy("date", "desc"), limit(10));
