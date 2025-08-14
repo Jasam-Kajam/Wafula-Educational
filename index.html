@@ -291,3 +291,61 @@
       const sideCards = document.querySelectorAll(".featured-side .card");
       if(posts[0]){
         const img = posts[0].
+// Featured main
+        main.innerHTML = `
+          <img src="${posts[0].image || 'https://via.placeholder.com/800x450'}" alt="${posts[0].title}">
+          <div class="title"><a href="article.html?id=${posts[0].id}" style="color:white;text-decoration:none;">${posts[0].title}</a></div>
+        `;
+      }
+
+      // Featured side
+      sideCards.forEach((card, idx) => {
+        if(posts[idx+1]){
+          card.innerHTML = `
+            <img src="${posts[idx+1].image || 'https://via.placeholder.com/400x220'}" alt="${posts[idx+1].title}">
+            <div class="title"><a href="article.html?id=${posts[idx+1].id}" style="color:white;text-decoration:none;">${posts[idx+1].title}</a></div>
+          `;
+        }
+      });
+    }
+
+    function renderCategories(posts) {
+      const container = document.getElementById("categoriesContainer");
+      container.innerHTML = "";
+      categories.forEach((cat, idx) => {
+        const catPosts = posts.filter(p => p.category === cat).slice(0, 6);
+        if(catPosts.length > 0){
+          const section = document.createElement("div");
+          section.classList.add("category-section");
+          section.innerHTML = `
+            <div class="category-title" style="background-color:${colors[idx % colors.length]}">${cat.toUpperCase()}</div>
+            <div class="category-grid">
+              ${catPosts.map(p => `
+                <div class="post-card">
+                  <img src="${p.image || 'https://via.placeholder.com/300x180'}" alt="${p.title}">
+                  <div class="post-title"><a href="article.html?id=${p.id}" style="color:#2e2e2e;text-decoration:none;">${p.title}</a></div>
+                  <div class="excerpt">${p.excerpt || ''}</div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+          container.appendChild(section);
+        }
+      });
+    }
+
+    function renderBreakingNews(posts) {
+      const marquee = document.getElementById("breakingNews");
+      marquee.innerHTML = posts.map(p => `<a href="article.html?id=${p.id}">${p.title}</a>`).join(' ');
+    }
+
+    fetchPosts();
+
+    function subscribe() {
+      const email = document.getElementById("subscriberEmail").value;
+      if(email) alert(`Thank you for subscribing: ${email}`);
+      else alert("Please enter a valid email.");
+    }
+  </script>
+</body>
+</html>
