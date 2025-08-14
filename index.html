@@ -1,238 +1,265 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>View Post</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mpasho — Entertainment & Lifestyle (Firebase Version)</title>
+  <meta name="description" content="A responsive entertainment/news magazine template inspired by Mpasho.co.ke, now powered by Firebase." />
   <style>
+    :root {
+      --accent: #e11d48;
+      --muted: #6b7280;
+      --bg: #0f172a;
+      --card: #0b1220;
+      --glass: rgba(255, 255, 255, 0.03);
+    }
+
+    * { box-sizing: border-box; }
     body {
-      font-family: 'Georgia', serif;
-      max-width: 800px;
-      margin: auto;
-      padding: 20px;
-      background-color: #f5f5f5;
-      color: #333;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      margin: 0;
+      background: linear-gradient(180deg, #020617 0%, #071029 100%);
+      color: #e6eef8;
     }
 
-    #coverImage {
-      width: 100%;
-      max-height: 400px;
-      object-fit: cover;
-      margin-bottom: 20px;
+    header {
+      backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .container { max-width: 1150px; margin: 0 auto; padding: 18px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo { font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: white; }
+    nav { display: flex; gap: 16px; align-items: center; }
+
+    .navlinks a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 8px 10px;
       border-radius: 8px;
-      display: none;
+    }
+    .navlinks a:hover { color: white; background: var(--glass); }
+
+    .search-input {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.03);
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: inherit;
     }
 
-    h1#postTitle {
-      font-size: 2.6em;
-      font-weight: bold;
-      color: #0d47a1;
-      border-bottom: 4px solid #0d47a1;
-      padding-bottom: 10px;
-      margin-bottom: 5px;
-    }
-
-    .post-category {
-      display: inline-block;
-      background-color: #ff6f00;
+    .btn {
+      background: var(--accent);
       color: white;
-      font-size: 0.95em;
-      font-weight: bold;
-      padding: 6px 12px;
-      border-radius: 20px;
-      margin-top: 10px;
-      margin-bottom: 5px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
     }
 
-    .post-meta {
-      font-size: 0.9em;
-      color: #555;
-      margin-bottom: 25px;
+    .hero {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
     }
 
-    iframe, img, video {
-      max-width: 100%;
-      height: auto;
-      margin-top: 15px;
+    .hero-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      padding: 18px;
+      border-radius: 10px;
+      box-shadow: 0 6px 18px rgba(2,6,23,0.6);
+    }
+
+    .hero img {
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .meta { font-size: 13px; color: var(--muted); margin-top: 8px; }
+    .title { font-size: 22px; font-weight: 700; margin-top: 8px; }
+    .excerpt { color: #cbd5e1; margin-top: 10px; }
+
+    .list-card { display: flex; gap: 12px; margin-bottom: 12px; }
+    .list-card img {
+      width: 110px;
+      height: 70px;
+      object-fit: cover;
       border-radius: 6px;
     }
+    .list-info { flex: 1; }
 
-    #postContent img {
-      max-width: 48%;
-      height: auto;
-      border-radius: 6px;
-      margin: 0 0 1rem 0;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 20px;
     }
 
-    #postContent img:nth-of-type(odd) {
-      float: left;
-      margin: 0 1rem 1rem 0;
+    .article {
+      background: var(--card);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .article img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+    }
+    .article .body { padding: 12px; }
+
+    .kicker { font-size: 12px; color: var(--muted); font-weight: 700; }
+    .article h3 { margin: 8px 0 0; font-size: 16px; }
+
+    footer {
+      margin-top: 30px;
+      padding: 20px;
+      color: var(--muted);
+      text-align: center;
     }
 
-    #postContent img:nth-of-type(even) {
-      float: right;
-      margin: 0 0 1rem 1rem;
+    @media (max-width: 1000px) {
+      .hero { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: repeat(2, 1fr); }
     }
-
-    #postContent::after {
-      content: "";
-      display: table;
-      clear: both;
-    }
-
-    @media (max-width: 600px) {
-      #postContent img {
-        max-width: 100%;
-        float: none;
-        display: block;
-        margin: 1rem auto;
-      }
+    @media (max-width: 640px) {
+      .navlinks { display: none; }
+      .grid { grid-template-columns: 1fr; }
+      .hero img { height: 220px; }
     }
   </style>
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 </head>
-
 <body>
-  <img id="coverImage" alt="Cover Image" />
-  <h1 id="postTitle">Loading...</h1>
-  <div class="post-category" id="postCategory"></div>
-  <div class="post-meta" id="postMeta"></div>
-  <div id="postContent"></div>
+  <header>
+    <div class="container topbar">
+      <div style="display: flex; align-items: center; gap: 18px;">
+        <div class="brand">
+          <div class="logo">Mpasho<span style="color: var(--accent)">.</span></div>
+        </div>
+        <div class="search">
+          <input type="search" class="search-input" aria-label="Search" placeholder="Search articles" />
+        </div>
+      </div>
+      <nav class="navlinks" aria-label="Main navigation">
+        <a href="#">Home</a>
+        <a href="#">Entertainment</a>
+        <a href="#">News</a>
+        <a href="#">Lifestyle</a>
+        <a href="#">Events</a>
+        <a class="btn" href="#">Subscribe</a>
+      </nav>
+    </div>
+  </header>
 
-  <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyAwAxP-MWwNnKP59PA6joil4Ceq10eozlc",
-    authDomain: "wafula-s-educational-posts.firebaseapp.com",
-    projectId: "wafula-s-educational-posts",
-    storageBucket: "wafula-s-educational-posts.appspot.com",
-    messagingSenderId: "your-id",
-    appId: "your-id"
-  };
+  <main class="container">
+    <section class="hero" aria-label="Featured story">
+      <article class="hero-card">
+        <img src="" alt="Featured story image" />
+        <div class="meta"></div>
+        <h1 class="title"></h1>
+        <p class="excerpt"></p>
+      </article>
+      <aside>
+        <div class="hero-card" style="padding: 12px;">
+          <h3 style="margin: 0 0 12px;">Most Read</h3>
+          <div id="most-read"></div>
+        </div>
+      </aside>
+    </section>
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+    <section class="grid" aria-label="Latest articles"></section>
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const postId = urlParams.get("id");
+    <footer>
+      <div style="max-width: 900px; margin: 0 auto;">
+        <p style="margin: 6px 0;">© 2025 Mpasho — Firebase-powered demo. Replace all placeholder text and images with your original content.</p>
+        <p class="muted" style="font-size: 13px;">Built with plain HTML/CSS + Firebase Firestore.</p>
+      </div>
+    </footer>
+  </main>
 
-  function formatViews(num) {
-    if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + "M";
-    if (num >= 1_000) return (num / 1_000).toFixed(1) + "K";
-    return num;
-  }
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-  if (!postId) {
-    document.getElementById("postTitle").textContent = "No post ID provided.";
-  } else {
-    const postRef = db.collection("posts").doc(postId);
-    const viewsRef = db.collection("views").doc(postId);
+    const firebaseConfig = {
+      apiKey: "AIzaSyAwAxP-MWwNnKP59PA6joil4Ceq10eozlc",
+      authDomain: "wafula-s-educational-posts.firebaseapp.com",
+      projectId: "wafula-s-educational-posts"
+    };
 
-    // Step 1: Load and display post
-    postRef.get().then(doc => {
-      if (!doc.exists) {
-        document.getElementById("postTitle").textContent = "Post not found.";
-        return;
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    function getFirstImage(post) {
+      // 1. Array field
+      if (post.images && Array.isArray(post.images) && post.images.length > 0) {
+        return post.images[0];
       }
-
-      const post = doc.data();
-      document.getElementById("postTitle").textContent = post.title || "Untitled";
-      document.getElementById("postCategory").textContent = post.category || "Uncategorized";
-
-      const author = post.author || "Unknown Author";
-      const date = post.date
-        ? new Date(post.date).toLocaleDateString()
-        : "Unknown Date";
-
-      // Step 2: Increment the view count
-      viewsRef.set({ count: firebase.firestore.FieldValue.increment(1) }, { merge: true })
-        .then(() => {
-          // Step 3: Fetch the updated count
-          return viewsRef.get();
-        })
-        .then(viewDoc => {
-          const views = viewDoc.exists ? viewDoc.data().count || 1 : 1;
-          document.getElementById("postMeta").textContent =
-            `By ${author} • ${date} • ${formatViews(views)} views`;
-        });
-
-      // Step 4: Render post content
-      if (post.cover) {
-        const coverImage = document.getElementById("coverImage");
-        coverImage.src = post.cover;
-        coverImage.style.display = "block";
+      // 2. Single image field
+      if (post.image) {
+        return post.image;
       }
-
-      let html = post.article || "";
-      if (post.url) {
-        const ext = post.url.split('.').pop().split('?')[0].toLowerCase();
-        if (ext === "pdf") {
-          html += `<iframe src="${post.url}" height="400"></iframe>`;
-        } else if (["jpg", "jpeg", "png", "gif"].includes(ext)) {
-          html += `<img src="${post.url}" alt="Image">`;
-        } else if (["mp4", "webm"].includes(ext)) {
-          html += `<video controls><source src="${post.url}" type="video/${ext}"></video>`;
-        } else {
-          html += `<p><a href="${post.url}" target="_blank">Download File</a></p>`;
+      // 3. Extract from HTML content
+      if (post.content) {
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = post.content;
+        const firstImg = tempDiv.querySelector("img");
+        if (firstImg && firstImg.src) {
+          return firstImg.src;
         }
       }
-
-      document.getElementById("postContent").innerHTML = html;
-
-    }).catch(error => {
-      document.getElementById("postTitle").textContent = "Error loading post.";
-      console.error(error);
-    });
-  }
-</script>
-
-  <footer style="background-color: #0d47a1; color: white; padding: 40px 20px; font-family: Arial, sans-serif;">
-    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: auto;">
-      <div style="flex: 1; min-width: 200px;">
-        <h3 style="font-family: 'Times New Roman', serif;">Samuwa EducaNews</h3>
-        <p>Empowering students, teachers, and readers with quality educational content and news updates.</p>
-      </div>
-      <div style="flex: 1; min-width: 200px;">
-        <h4>Quick Links</h4>
-        <ul style="list-style: none; padding: 0;">
-          <li><a href="index.html" style="color: white; text-decoration: none;">Home</a></li>
-          <li><a href="article.html" style="color: white; text-decoration: none;">Latest Articles</a></li>
-          <li><a href="#" style="color: white; text-decoration: none;">Categories</a></li>
-          <li><a href="about.html" style="color: white; text-decoration: none;">About Us</a></li>
-          <li><a href="contac.html" style="color: white; text-decoration: none;">Contact</a></li>
-        </ul>
-      </div>
-      <div style="flex: 1; min-width: 200px;">
-        <h4>Newsletter</h4>
-        <p>Stay updated! Get the latest posts delivered to your inbox.</p>
-        <input id="subscriberEmail" type="email" placeholder="Your email" style="padding: 8px; width: 100%; border: none; border-radius: 4px; margin-bottom: 10px;" />
-        <button onclick="subscribe()" style="padding: 10px; width: 100%; background-color: #2196f3; color: white; border: none; border-radius: 4px;">Subscribe</button>
-      </div>
-      <div style="flex: 1; min-width: 200px;">
-        <h4>Follow Us</h4>
-        <p>
-          <a href="#" style="color: white; margin-right: 10px;">Facebook</a>
-          <a href="#" style="color: white; margin-right: 10px;">Twitter</a>
-          <a href="#" style="color: white;">YouTube</a>
-        </p>
-      </div>
-    </div>
-    <hr style="border-color: rgba(255,255,255,0.2); margin: 20px 0;" />
-    <div style="text-align: center; font-size: 14px;">&copy; 2025 Samuwa EducaNews. All rights reserved.</div>
-  </footer>
-
-  <script>
-    function subscribe() {
-      const email = document.getElementById("subscriberEmail").value.trim();
-      if (email) {
-        alert(`Thank you for subscribing! You'll receive updates to ${email}\nFrom: samuwaeducanewscampany@hotmail.com`);
-        document.getElementById("subscriberEmail").value = "";
-      } else {
-        alert("Please enter your email address.");
-      }
+      // 4. Fallback placeholder
+      return "https://via.placeholder.com/600x400?text=No+Image";
     }
+
+    async function loadPosts() {
+      const q = query(collection(db, "posts"), orderBy("date", "desc"), limit(10));
+      const snapshot = await getDocs(q);
+      const posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      if (posts.length) {
+        const hero = posts[0];
+        document.querySelector(".hero img").src = getFirstImage(hero);
+        document.querySelector(".hero .title").textContent = hero.title || "";
+        document.querySelector(".hero .excerpt").textContent = hero.excerpt || "";
+        document.querySelector(".hero .meta").textContent = 
+          `${hero.category || ""} • ${hero.date?.seconds ? new Date(hero.date.seconds * 1000).toLocaleDateString() : ""}`;
+      }
+
+      const grid = document.querySelector(".grid");
+      grid.innerHTML = posts.slice(1).map(post => `
+        <article class="article">
+          <img src="${getFirstImage(post)}" alt="${post.title || "Article image"}" />
+          <div class="body">
+            <div class="kicker">${post.category || ""}</div>
+            <h3>${post.title || ""}</h3>
+            <div class="muted" style="margin-top: 8px;">${post.date?.seconds ? new Date(post.date.seconds * 1000).toLocaleDateString() : ""}</div>
+          </div>
+        </article>
+      `).join("");
+
+      const mostRead = document.getElementById("most-read");
+      mostRead.innerHTML = posts.slice(0, 3).map(post => `
+        <div class="list-card">
+          <img src="${getFirstImage(post)}" alt="${post.title || "Thumbnail"}" />
+          <div class="list-info">
+            <div class="kicker">${post.category || ""}</div>
+            <div style="font-weight: 700;">${post.title || ""}</div>
+            <div class="muted" style="font-size: 13px;">${post.date?.seconds ? new Date(post.date.seconds * 1000).toLocaleDateString() : ""}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    loadPosts();
   </script>
 </body>
 </html>
