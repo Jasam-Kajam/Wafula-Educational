@@ -89,64 +89,69 @@
   </div>
 </footer>
 
-  </main>  <!-- Firebase -->  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js"></script>  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAwAxP-MWwNnKP59PA6joil4Ceq10eozlc",
-      authDomain: "wafula-s-educational-posts.firebaseapp.com",
-      projectId: "wafula-s-educational-posts"
-    };
+  </main>  <!-- Firebase -->  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+  const firebaseConfig = {
+    apiKey: "AIzaSyAwAxP-MWwNnKP59PA6joil4Ceq10eozlc",
+    authDomain: "wafula-s-educational-posts.firebaseapp.com",
+    projectId: "wafula-s-educational-posts"
+  };
 
-    function getFirstImage(post) {
-      if (post.images && Array.isArray(post.images) && post.images.length > 0) {
-        return post.images[0];
-      }
-      return "https://via.placeholder.com/600x400?text=No+Image";
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  function getFirstImage(post) {
+    if (post.images && Array.isArray(post.images) && post.images.length > 0) {
+      return post.images[0];
+    }
+    return "https://via.placeholder.com/600x400?text=No+Image";
+  }
+
+  async function loadPosts() {
+    const q = query(collection(db, "posts"), orderBy("date", "desc"), limit(10));
+    const snapshot = await getDocs(q);
+    const posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    if (posts.length > 0) {
+      const hero = posts[0];
+      document.querySelector(".hero img").src = getFirstImage(hero);
+      document.querySelector(".hero .title").textContent = hero.title;
+      document.querySelector(".hero .excerpt").textContent = hero.excerpt || "";
+      document.querySelector(".hero .meta").textContent = `${hero.category || ""} • ${hero.date?.seconds ? new Date(hero.date.seconds * 1000).toLocaleDateString() : ""}`;
     }
 
-    async function loadPosts() {
-      const snapshot = await db.collection("posts").orderBy("date", "desc").limit(10).get();
-      const posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const grid = document.querySelector(".grid");
+    grid.innerHTML = "";
+    posts.slice(1).forEach(post => {
+      grid.innerHTML += `
+        <article class="article">
+          <img src="${getFirstImage(post)}" alt="article image" />
+          <div class="body">
+            <div class="kicker">${post.category || ""}</div>
+            <h3>${post.title || ""}</h3>
+            <div class="muted" style="margin-top:8px">${post.date?.seconds ? new Date(post.date.seconds * 1000).toLocaleDateString() : ""}</div>
+          </div>
+        </article>`;
+    });
 
-      if (posts.length > 0) {
-        const hero = posts[0];
-        document.querySelector(".hero img").src = getFirstImage(hero);
-        document.querySelector(".hero .title").textContent = hero.title;
-        document.querySelector(".hero .excerpt").textContent = hero.excerpt;
-        document.querySelector(".hero .meta").textContent = `${hero.category} • ${new Date(hero.date.seconds * 1000).toLocaleDateString()}`;
-      }
+    const mostRead = document.getElementById("most-read");
+    mostRead.innerHTML = "";
+    posts.slice(0, 3).forEach(post => {
+      mostRead.innerHTML += `
+        <div class="list-card">
+          <img src="${getFirstImage(post)}" alt="thumb" />
+          <div class="list-info">
+            <div class="kicker">${post.category || ""}</div>
+            <div style="font-weight:700">${post.title || ""}</div>
+            <div class="muted" style="font-size:13px">${post.date?.seconds ? new Date(post.date.seconds * 1000).toLocaleDateString() : ""}</div>
+          </div>
+        </div>`;
+    });
+  }
 
-      const grid = document.querySelector(".grid");
-      grid.innerHTML = "";
-      posts.slice(1).forEach(post => {
-        grid.innerHTML += `
-          <article class="article">
-            <img src="${getFirstImage(post)}" alt="article image" />
-            <div class="body">
-              <div class="kicker">${post.category}</div>
-              <h3>${post.title}</h3>
-              <div class="muted" style="margin-top:8px">${new Date(post.date.seconds * 1000).toLocaleDateString()}</div>
-            </div>
-          </article>`;
-      });
-
-      const mostRead = document.getElementById("most-read");
-      mostRead.innerHTML = "";
-      posts.slice(0, 3).forEach(post => {
-        mostRead.innerHTML += `
-          <div class="list-card">
-            <img src="${getFirstImage(post)}" alt="thumb" />
-            <div class="list-info">
-              <div class="kicker">${post.category}</div>
-              <div style="font-weight:700">${post.title}</div>
-              <div class="muted" style="font-size:13px">${new Date(post.date.seconds * 1000).toLocaleDateString()}</div>
-            </div>
-          </div>`;
-      });
-    }
-
-    loadPosts();
-  </script></body>
+  loadPosts();
+</script>
+</body>
 </html>
