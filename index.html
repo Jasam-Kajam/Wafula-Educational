@@ -1,72 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Samuwa EducaNews – Learn, Read & Explore</title>
+
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
   <style>
     html, body {
       margin: 0; padding: 0; font-family: 'Roboto', sans-serif;
-      background: #f4f6f9; overflow-x: hidden;
+      background: #f4f6f9; overflow-x: hidden; max-width: 100%;
     }
     * { box-sizing: border-box; }
 
-    /* Top Ticker */
+    /* Breaking News Ticker */
     .ticker {
-      background-color: #c2185b; color: white; padding: 5px 0; font-size: 14px;
-      display: flex; align-items: center; overflow: hidden;
+      background-color: #c2185b;
+      color: white;
+      padding: 5px 0;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
     }
-    .ticker-label { background: #f57c00; padding: 5px 10px; font-weight: bold; margin-right: 10px; white-space: nowrap; }
-    .ticker-content marquee a { color: white; text-decoration: none; margin-right: 30px; }
+    .ticker-label {
+      background: #f57c00;
+      padding: 5px 10px;
+      font-weight: bold;
+      margin-right: 10px;
+      white-space: nowrap;
+    }
+    .ticker-content marquee a {
+      color: white;
+      text-decoration: none;
+      margin-right: 30px;
+    }
     .ticker-content marquee a:hover { text-decoration: underline; }
 
-    /* Header & Navigation */
+    /* Header */
     header {
-      background-color: #007bff; padding: 10px 20px; display: flex;
-      justify-content: space-between; align-items: center; color: white; position: sticky; top: 0; z-index: 100;
+      background-color: #007bff;
+      padding: 10px 20px;
+      display: flex; justify-content: space-between; align-items: center;
+      color: white;
     }
     .logo { display: flex; align-items: center; font-family: 'Times New Roman', serif; font-size: 24px; font-weight: bold; }
-    .logo img { height: 40px; margin-right: 10px; border-radius: 6px; }
+    .logo img { height: 40px; width: auto; margin-right: 10px; border-radius: 6px; }
     .hamburger { font-size: 28px; cursor: pointer; }
-
     .menu { display: none; background: #0056b3; padding: 10px; }
     .menu a { display: block; color: white; text-decoration: none; margin-bottom: 8px; }
     .menu a:hover { text-decoration: underline; }
 
-    /* Main Layout: Sidebar + Content */
-    .main-content { display: flex; max-width: 1200px; margin: 20px auto; padding: 0 20px; gap: 20px; }
-    .sidebar { width: 300px; }
-    .most-read { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .most-read h3 { margin-top: 0; color: #2e2e2e; }
-    .most-read .read-item { margin-bottom: 12px; }
-    .most-read .read-item .title { font-weight: bold; }
-    .most-read .read-item .category { font-size: 12px; color: #555; }
+    /* Layout */
+    .container { display: flex; max-width: 1200px; margin: 20px auto; gap: 20px; padding: 0 10px; }
+    .main-content { flex: 2; display: flex; flex-direction: column; gap: 20px; }
+    .sidebar { flex: 1; display: flex; flex-direction: column; gap: 20px; }
 
-    .articles { flex: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-    .post-card {
-      background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,.08);
-      padding: 20px; transition: transform 0.2s;
-    }
+    /* Featured Post */
+    .featured-post { background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,.08); overflow: hidden; }
+    .featured-post img { width: 100%; height: auto; display: block; }
+    .featured-title { font-size: 28px; font-weight: bold; color: #2e2e2e; padding: 15px; }
+
+    /* Post Cards */
+    .post-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .post-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,.08); padding: 10px; transition: transform 0.2s; }
     .post-card:hover { transform: translateY(-3px); }
-    .post-card img { width: 100%; border-radius: 8px; margin-bottom: 10px; }
-    .post-title { font-size: 20px; font-weight: bold; margin: 10px 0; color: #2e2e2e; }
-    .meta-info { font-size: 13px; color: #777; margin-bottom: 8px; }
+    .post-card img { width: 100%; height: auto; border-radius: 8px; margin-bottom: 8px; }
+    .post-title { font-size: 20px; font-weight: bold; margin-bottom: 6px; color: #2e2e2e; }
+    .post-excerpt { font-size: 14px; color: #555; margin-bottom: 8px; }
+    .read-more { color: #007bff; text-decoration: none; font-weight: bold; }
 
-    /* Footer (kept as you had) */
-    footer { background-color: #0d47a1; color: white; padding: 40px 20px; font-family: Arial, sans-serif; }
-    .footer-container { display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: auto; }
-    .footer-container > div { flex: 1; min-width: 200px; margin-bottom: 20px; }
-    .footer-container h3, .footer-container h4 { margin-top: 0; }
-    .footer-container ul { list-style: none; padding: 0; }
-    .footer-container a { color: white; text-decoration: none; }
-    .footer-container a:hover { text-decoration: underline; }
-    hr { border-color: rgba(255,255,255,0.2); margin: 20px 0; }
-    .footer-bottom { text-align: center; font-size: 14px; }
+    /* Sidebar widgets */
+    .widget { background: #fff; border-radius: 12px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+    .widget h3 { margin-top: 0; margin-bottom: 10px; font-size: 18px; }
+    .widget a { display: block; color: #007bff; text-decoration: none; margin-bottom: 8px; }
+    .widget a:hover { text-decoration: underline; }
+
+    @media (max-width: 900px) {
+      .container { flex-direction: column; }
+      .post-grid { grid-template-columns: 1fr; }
+      .sidebar { flex-direction: row; overflow-x: auto; }
+      .sidebar .widget { flex: 1; min-width: 200px; }
+    }
   </style>
 </head>
 <body>
 
+  <!-- Breaking News -->
   <div class="ticker">
     <div class="ticker-label">Breaking News</div>
     <div class="ticker-content">
@@ -74,15 +96,13 @@
     </div>
   </div>
 
+  <!-- Header -->
   <header>
     <div class="logo">
       <img src="https://res.cloudinary.com/dkoagpcul/image/upload/v1753858825/file_000000008bd461f489ab78e732435eba_tiqllb.png" alt="Samuwa Logo">
       Samuwa EducaNews
     </div>
-    <div class="hamburger" onclick="toggleMenu()" role="button" aria-controls="categoryMenu" aria-expanded="false" tabindex="0"
-         onkeydown="if(event.key==='Enter'||event.key===' ') toggleMenu()">
-      &#9776;
-    </div>
+    <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
   </header>
   <div class="menu" id="categoryMenu">
     <a href="#news">News</a>
@@ -95,120 +115,144 @@
     <a href="dev.html">Donate</a>
   </div>
 
-  <div class="main-content">
-    <aside class="sidebar">
-      <div class="most-read">
-        <h3>Most Read</h3>
-        <div id="mostReadList"></div>
+  <!-- Main Container -->
+  <div class="container">
+    <div class="main-content" id="mainContent">
+      <!-- Featured post will appear here -->
+      <div class="featured-post" id="featuredPost"></div>
+      <!-- Grid posts -->
+      <div class="post-grid" id="postGrid"></div>
+    </div>
+    <div class="sidebar" id="sidebar">
+      <div class="widget" id="trendingWidget">
+        <h3>Trending</h3>
       </div>
-    </aside>
-
-    <div class="articles" id="articlesGrid"></div>
+      <div class="widget" id="mostReadWidget">
+        <h3>Most Read</h3>
+      </div>
+    </div>
   </div>
 
-  <!-- Firestore & JS Logic -->
+  <!-- Firestore -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-lite.js";
 
-    window.toggleMenu = () => {
-      const menu = document.getElementById("categoryMenu");
-      const isOpen = menu.style.display === "block";
-      menu.style.display = isOpen ? "none" : "block";
-      document.querySelector(".hamburger")
-        .setAttribute("aria-expanded", String(!isOpen));
-    };
-
-    const app = initializeApp({
+    const firebaseConfig = {
       apiKey: "AIzaSyAwAxP-MWwNnKP59PA6joil4Ceq10eozlc",
       authDomain: "wafula-s-educational-posts.firebaseapp.com",
       projectId: "wafula-s-educational-posts"
-    });
+    };
+    const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    function getFirstImage(post) {
-      if (post.images && Array.isArray(post.images) && post.images.length) return post.images[0];
-      if (post.image) return post.image;
-      if (post.article) {
-        const div = document.createElement("div"); div.innerHTML = post.article;
-        const img = div.querySelector("img");
-        if (img && img.src) return img.src;
-      }
-      return "https://via.placeholder.com/600x400?text=No+Image";
+    window.toggleMenu = function () {
+      const menu = document.getElementById("categoryMenu");
+      const isOpen = menu.style.display === "block";
+      menu.style.display = isOpen ? "none" : "block";
+    };
+
+    async function fetchPosts() {
+      const q = query(collection(db, "posts"), orderBy("timestamp", "desc"), limit(20));
+      const snap = await getDocs(q);
+      const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      // Featured Post (latest)
+      const featured = data[0];
+      const firstImage = (featured.article?.match(/<img[^>]+src="([^">]+)"/) || [])[1] || "";
+      document.getElementById("featuredPost").innerHTML = `
+        ${firstImage ? `<img src="${firstImage}" alt="${featured.title}">` : ""}
+        <div class="featured-title">${featured.title}</div>
+      `;
+
+      // Grid posts
+      const postGrid = document.getElementById("postGrid");
+      data.slice(1).forEach(post => {
+        const img = (post.article?.match(/<img[^>]+src="([^">]+)"/) || [])[1] || "";
+        const card = document.createElement("div");
+        card.className = "post-card";
+        card.innerHTML = `
+          ${img ? `<img src="${img}" alt="${post.title}">` : ""}
+          <div class="post-title">${post.title}</div>
+          <div class="post-excerpt">${post.article?.replace(/<[^>]+>/g,"").split(" ").slice(0,25).join(" ")}...</div>
+          <a href="/post.html?id=${post.id}" class="read-more">Read More</a>
+        `;
+        postGrid.appendChild(card);
+      });
+
+      // Sidebar: Trending & Most Read
+      const trending = data.slice(0,5);
+      const trendingWidget = document.getElementById("trendingWidget");
+      trending.forEach(post => {
+        const link = document.createElement("a");
+        link.href = `/post.html?id=${post.id}`;
+        link.textContent = post.title;
+        trendingWidget.appendChild(link);
+      });
+
+      const mostRead = data.slice(0,5);
+      const mostReadWidget = document.getElementById("mostReadWidget");
+      mostRead.forEach(post => {
+        const link = document.createElement("a");
+        link.href = `/post.html?id=${post.id}`;
+        link.textContent = post.title;
+        mostReadWidget.appendChild(link);
+      });
     }
 
-    async function init() {
-      const postsSnap = await getDocs(query(collection(db, "posts"), orderBy("timestamp", "desc"), limit(30)));
-      const posts = postsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-      // Breaking News
-      const breaking = posts.slice(0,5);
-      document.getElementById("breakingNews").innerHTML = breaking.map(p => `<a href="/post.html?id=${p.id}">${p.title}</a>`).join(" • ");
-
-      // Most Read (first 5)
-      const mostReadEl = document.getElementById("mostReadList");
-      mostReadEl.innerHTML = breaking.map(p => `
-        <div class="read-item">
-          <div class="title">${p.title}</div>
-          <div class="category">${(p.category || "").toUpperCase()}</div>
-        </div>`).join("");
-
-      // Article Grid (remaining)
-      const grid = document.getElementById("articlesGrid");
-      grid.innerHTML = posts.slice(5).map(p => `
-        <div class="post-card">
-          <img src="${getFirstImage(p)}" alt="${p.title}">
-          <div class="meta-info">${(p.category || "").toUpperCase()} • ${p.timestamp?.seconds ? new Date(p.timestamp.seconds * 1000).toLocaleDateString() : ""}</div>
-          <div class="post-title">${p.title}</div>
-          <a href="/post.html?id=${p.id}" style="color: #007bff; text-decoration: none;">Read More</a>
-        </div>`).join("");
+    async function fetchBreakingNews() {
+      const q = query(collection(db, "posts"), orderBy("timestamp","desc"), limit(5));
+      const snap = await getDocs(q);
+      const data = snap.docs.map(doc => ({ id: doc.id, title: doc.data().title }));
+      const marquee = document.getElementById("breakingNews");
+      marquee.innerHTML = data.map(d => `<a href="/post.html?id=${d.id}">${d.title}</a>`).join(" • ");
     }
 
-    init();
+    fetchPosts();
+    fetchBreakingNews();
   </script>
 
   <!-- Footer -->
-  <footer>
-    <div class="footer-container">
-      <div>
+  <footer style="background-color: #0d47a1; color: white; padding: 40px 20px; font-family: Arial, sans-serif;">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: auto;">
+      <div style="flex: 1; min-width: 200px;">
         <h3 style="font-family: 'Times New Roman', serif;">Samuwa EducaNews</h3>
         <p>Empowering students, teachers, and readers with quality educational content and news updates.</p>
       </div>
-      <div>
+      <div style="flex: 1; min-width: 200px;">
         <h4>Quick Links</h4>
-        <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="article.html">Latest Articles</a></li>
-          <li><a href="#">Categories</a></li>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="contact.html">Contact</a></li>
+        <ul style="list-style: none; padding: 0;">
+          <li><a href="#" style="color: white; text-decoration: none;">Home</a></li>
+          <li><a href="article.html" style="color: white; text-decoration: none;">Latest Articles</a></li>
+          <li><a href="#" style="color: white; text-decoration: none;">Categories</a></li>
+          <li><a href="about.html" style="color: white; text-decoration: none;">About Us</a></li>
+          <li><a href="contact.html" style="color: white; text-decoration: none;">Contact</a></li>
         </ul>
       </div>
-      <div>
+      <div style="flex: 1; min-width: 200px;">
         <h4>Newsletter</h4>
-        <p>Stay updated! Get the latest posts delivered to your inbox.</p>
         <input id="subscriberEmail" type="email" placeholder="Your email" style="padding: 8px; width: 100%; border: none; border-radius: 4px; margin-bottom: 10px;" />
-        <button onclick="subscribe()" style="padding: 10px; width: 100%; background-color: #2196f3; color: white; border: none; border-radius: 4px;">Subscribe</button>
-      </div>
-      <div>
-        <h4>Follow Us</h4>
-        <p>
-          <a href="https://www.facebook.com/profile.php?id=61578932424898" style="margin-right:10px;">Facebook</a>
-          <a href="#" style="margin-right:10px;">Twitter</a>
-          <a href="#">YouTube</a>
-        </p>
+    <button onclick="subscribe()" style="padding: 10px 15px; background-color: #f57c00; border: none; border-radius: 4px; color: white; cursor: pointer;">Subscribe</button>
       </div>
     </div>
-    <hr />
-    <div class="footer-bottom">&copy; 2025 Samuwa EducaNews. All rights reserved.</div>
+    <div style="text-align: center; margin-top: 20px;">
+      &copy; 2025 Samuwa EducaNews. All rights reserved.
+    </div>
   </footer>
 
   <script>
     function subscribe() {
-      const email = document.getElementById("subscriberEmail").value.trim();
-      alert(email ? `Thank you for subscribing! Updates to ${email}.` : "Please enter your email address.");
-      if (email) document.getElementById("subscriberEmail").value = "";
+      const emailInput = document.getElementById('subscriberEmail');
+      const email = emailInput.value.trim();
+      if (!email) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+      // Here you can add Firestore or API integration to store email
+      alert(`Thank you for subscribing, ${email}!`);
+      emailInput.value = '';
     }
   </script>
+
 </body>
 </html>
