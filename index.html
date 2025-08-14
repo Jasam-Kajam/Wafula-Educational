@@ -1,258 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>  
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Samuwa EducaNews – Learn, Read & Explore</title>
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-
-  <style>
-    html, body {
-      margin: 0; padding: 0; font-family: 'Roboto', sans-serif;
-      background: #f4f6f9; overflow-x: hidden; max-width: 100%;
-    }
-    * { box-sizing: border-box; }
-
-    /* Breaking News Ticker */
-    .ticker {
-      background-color: #c2185b;
-      color: white;
-      padding: 5px 0;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-    }
-    .ticker-label {
-      background: #f57c00;
-      padding: 5px 10px;
-      font-weight: bold;
-      margin-right: 10px;
-      white-space: nowrap;
-    }
-    .ticker-content marquee a {
-      color: white;
-      text-decoration: none;
-      margin-right: 30px;
-    }
-    .ticker-content marquee a:hover { text-decoration: underline; }
-
-    /* Header */
-    header {
-      background-color: #007bff;
-      padding: 10px 20px;
-      display: flex; justify-content: space-between; align-items: center;
-      color: white;
-    }
-    .logo { display: flex; align-items: center; font-family: 'Times New Roman', serif; font-size: 24px; font-weight: bold; }
-    .logo img { height: 40px; width: auto; margin-right: 10px; border-radius: 6px; }
-    .hamburger { font-size: 28px; cursor: pointer; }
-    .menu { display: none; background: #0056b3; padding: 10px; }
-    .menu a { display: block; color: white; text-decoration: none; margin-bottom: 8px; }
-    .menu a:hover { text-decoration: underline; }
-
-    /* Layout */
-    .container { display: flex; max-width: 1200px; margin: 20px auto; gap: 20px; padding: 0 10px; }
-    .main-content { flex: 2; display: flex; flex-direction: column; gap: 20px; }
-    .sidebar { flex: 1; display: flex; flex-direction: column; gap: 20px; }
-
-    /* Featured Post */
-    .featured-post { background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,.08); overflow: hidden; }
-    .featured-post img { width: 100%; height: auto; display: block; }
-    .featured-title { font-size: 28px; font-weight: bold; color: #2e2e2e; padding: 15px; }
-
-    /* Post Cards */
-    .post-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .post-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,.08); padding: 10px; transition: transform 0.2s; }
-    .post-card:hover { transform: translateY(-3px); }
-    .post-card img { width: 100%; height: auto; border-radius: 8px; margin-bottom: 8px; }
-    .post-title { font-size: 20px; font-weight: bold; margin-bottom: 6px; color: #2e2e2e; }
-    .post-excerpt { font-size: 14px; color: #555; margin-bottom: 8px; }
-    .read-more { color: #007bff; text-decoration: none; font-weight: bold; }
-
-    /* Sidebar widgets */
-    .widget { background: #fff; border-radius: 12px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,.08); }
-    .widget h3 { margin-top: 0; margin-bottom: 10px; font-size: 18px; }
-    .widget a { display: block; color: #007bff; text-decoration: none; margin-bottom: 8px; }
-    .widget a:hover { text-decoration: underline; }
-
-    @media (max-width: 900px) {
-      .container { flex-direction: column; }
-      .post-grid { grid-template-columns: 1fr; }
-      .sidebar { flex-direction: row; overflow-x: auto; }
-      .sidebar .widget { flex: 1; min-width: 200px; }
-    }
-  </style>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mpasho-style Homepage</title>
+<style>
+body { margin:0; font-family: Arial, sans-serif; background: #f9f9f9; }
+header { background: #00796b; color: #fff; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; }
+header h1 { margin:0; font-size: 24px; }
+#breakingNews { white-space: nowrap; overflow: hidden; flex:1; margin-left: 20px; }
+#breakingNews a { color: #fff; text-decoration: none; margin-right: 15px; font-weight: bold; }
+#contentArea { padding: 20px; }
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  margin: 20px 0 10px;
+}
+.category-header h2 { margin: 0; font-size: 20px; }
+.category-header .see-all { color: #fff; text-decoration: underline; font-size: 14px; }
+.category-scroller {
+  display: flex;
+  overflow-x: auto;
+  gap: 15px;
+  padding: 10px 0;
+}
+.post-card {
+  flex: 0 0 250px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  padding: 10px;
+  text-decoration: none;
+  color: #2e2e2e;
+  transition: transform 0.2s;
+}
+.post-card:hover { transform: translateY(-3px); }
+.post-card img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; }
+.post-card .post-title { font-weight: bold; margin-bottom: 5px; font-size: 16px; }
+.post-card .post-desc { font-size: 14px; color: #555; }
+.skeleton { width: 250px; height: 200px; background: #ddd; border-radius: 12px; }
+</style>
 </head>
 <body>
 
-  <!-- Breaking News -->
-  <div class="ticker">
-    <div class="ticker-label">Breaking News</div>
-    <div class="ticker-content">
-      <marquee id="breakingNews" behavior="scroll" direction="left" scrollamount="5"></marquee>
-    </div>
-  </div>
+<header>
+  <h1>Mpasho Clone</h1>
+  <div id="breakingNews"></div>
+</header>
 
-  <!-- Header -->
-  <header>
-    <div class="logo">
-      <img src="https://res.cloudinary.com/dkoagpcul/image/upload/v1753858825/file_000000008bd461f489ab78e732435eba_tiqllb.png" alt="Samuwa Logo">
-      Samuwa EducaNews
-    </div>
-    <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
-  </header>
-  <div class="menu" id="categoryMenu">
-    <a href="#news">News</a>
-    <a href="#sports">Sports</a>
-    <a href="#blogs">Blogs</a>
-    <a href="#business">Business</a>
-    <a href="#courses">Courses</a>
-    <a href="#funny">Funny</a>
-    <a href="#inspire me">Inspire Me</a>
-    <a href="dev.html">Donate</a>
-  </div>
+<div id="contentArea">
+  <!-- Categories and posts will be injected here -->
+</div>
 
-  <!-- Main Container -->
-  <div class="container">
-    <div class="main-content" id="mainContent">
-      <!-- Featured post will appear here -->
-      <div class="featured-post" id="featuredPost"></div>
-      <!-- Grid posts -->
-      <div class="post-grid" id="postGrid"></div>
-    </div>
-    <div class="sidebar" id="sidebar">
-      <div class="widget" id="trendingWidget">
-        <h3>Trending</h3>
-      </div>
-      <div class="widget" id="mostReadWidget">
-        <h3>Most Read</h3>
-      </div>
-    </div>
-  </div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-lite.js";
 
-  <!-- Firestore -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-lite.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyAwAxP-MWwNnKP59PA6joil4Ceq10eozlc",
+  authDomain: "wafula-s-educational-posts.firebaseapp.com",
+  projectId: "wafula-s-educational-posts"
+};
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAwAxP-MWwNnKP59PA6joil4Ceq10eozlc",
-      authDomain: "wafula-s-educational-posts.firebaseapp.com",
-      projectId: "wafula-s-educational-posts"
-    };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-    window.toggleMenu = function () {
-      const menu = document.getElementById("categoryMenu");
-      const isOpen = menu.style.display === "block";
-      menu.style.display = isOpen ? "none" : "block";
-    };
+const contentArea = document.getElementById("contentArea");
+const categories = ["news", "sports", "business", "courses", "funny", "inspire me", "blogs"];
+const colors = ["#00796b", "#6a1b9a", "#f57c00", "#1976d2", "#c2185b", "#2e7d32"];
 
-    async function fetchPosts() {
-      const q = query(collection(db, "posts"), orderBy("timestamp", "desc"), limit(20));
-      const snap = await getDocs(q);
-      const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+categories.forEach((cat, i) => {
+  const section = document.createElement("section");
+  section.id = cat;
+  section.className = "category-section";
+  const header = document.createElement("div");
+  header.className = "category-header";
+  header.style.backgroundColor = colors[i % colors.length];
+  header.innerHTML = `<h2>${cat.charAt(0).toUpperCase() + cat.slice(1)}</h2> <a href="#${cat}" class="see-all">See All</a>`;
+  section.appendChild(header);
 
-      // Featured Post (latest)
-      const featured = data[0];
-      const firstImage = (featured.article?.match(/<img[^>]+src="([^">]+)"/) || [])[1] || "";
-      document.getElementById("featuredPost").innerHTML = `
-        ${firstImage ? `<img src="${firstImage}" alt="${featured.title}">` : ""}
-        <div class="featured-title">${featured.title}</div>
-      `;
+  const scroller = document.createElement("div");
+  scroller.className = "category-scroller";
+  scroller.innerHTML = `<div class="skeleton"></div>`;
+  section.appendChild(scroller);
 
-      // Grid posts
-      const postGrid = document.getElementById("postGrid");
-      data.slice(1).forEach(post => {
-        const img = (post.article?.match(/<img[^>]+src="([^">]+)"/) || [])[1] || "";
-        const card = document.createElement("div");
-        card.className = "post-card";
-        card.innerHTML = `
-          ${img ? `<img src="${img}" alt="${post.title}">` : ""}
-          <div class="post-title">${post.title}</div>
-          <div class="post-excerpt">${post.article?.replace(/<[^>]+>/g,"").split(" ").slice(0,25).join(" ")}...</div>
-          <a href="/post.html?id=${post.id}" class="read-more">Read More</a>
-        `;
-        postGrid.appendChild(card);
-      });
+  contentArea.appendChild(section);
+});
 
-      // Sidebar: Trending & Most Read
-      const trending = data.slice(0,5);
-      const trendingWidget = document.getElementById("trendingWidget");
-      trending.forEach(post => {
-        const link = document.createElement("a");
-        link.href = `/post.html?id=${post.id}`;
-        link.textContent = post.title;
-        trendingWidget.appendChild(link);
-      });
+const cacheKey = "samuwa:firstLoad";
+const cached = sessionStorage.getItem(cacheKey);
+if (cached) renderPosts(JSON.parse(cached));
+else fetchPosts();
+fetchBreakingNews();
 
-      const mostRead = data.slice(0,5);
-      const mostReadWidget = document.getElementById("mostReadWidget");
-      mostRead.forEach(post => {
-        const link = document.createElement("a");
-        link.href = `/post.html?id=${post.id}`;
-        link.textContent = post.title;
-        mostReadWidget.appendChild(link);
-      });
-    }
+async function fetchPosts() {
+  const q = query(collection(db, "posts"), orderBy("timestamp", "desc"), limit(50));
+  const snap = await getDocs(q);
+  const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  sessionStorage.setItem(cacheKey, JSON.stringify(data));
+  renderPosts(data);
+}
 
-    async function fetchBreakingNews() {
-      const q = query(collection(db, "posts"), orderBy("timestamp","desc"), limit(5));
-      const snap = await getDocs(q);
-      const data = snap.docs.map(doc => ({ id: doc.id, title: doc.data().title }));
-      const marquee = document.getElementById("breakingNews");
-      marquee.innerHTML = data.map(d => `<a href="/post.html?id=${d.id}">${d.title}</a>`).join(" • ");
-    }
+async function fetchBreakingNews() {
+  const q = query(collection(db, "posts"), orderBy("timestamp", "desc"), limit(5));
+  const snap = await getDocs(q);
+  const data = snap.docs.map(doc => ({ id: doc.id, title: doc.data().title }));
+  const marquee = document.getElementById("breakingNews");
+  marquee.innerHTML = data.map(d => `<a href="/post.html?id=${d.id}">${d.title}</a>`).join(" • ");
+}
 
-    fetchPosts();
-    fetchBreakingNews();
-  </script>
+function renderPosts(posts) {
+  posts.forEach(post => {
+    const cat = (post.category || "uncategorized").toLowerCase();
+    const section = document.getElementById(cat);
+    if (!section) return;
+    const scroller = section.querySelector(".category-scroller");
+    scroller.querySelectorAll(".skeleton").forEach(el => el.remove());
 
-  <!-- Footer -->
-  <footer style="background-color: #0d47a1; color: white; padding: 40px 20px; font-family: Arial, sans-serif;">
-    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: auto;">
-      <div style="flex: 1; min-width: 200px;">
-        <h3 style="font-family: 'Times New Roman', serif;">Samuwa EducaNews</h3>
-        <p>Empowering students, teachers, and readers with quality educational content and news updates.</p>
-      </div>
-      <div style="flex: 1; min-width: 200px;">
-        <h4>Quick Links</h4>
-        <ul style="list-style: none; padding: 0;">
-          <li><a href="#" style="color: white; text-decoration: none;">Home</a></li>
-          <li><a href="article.html" style="color: white; text-decoration: none;">Latest Articles</a></li>
-          <li><a href="#" style="color: white; text-decoration: none;">Categories</a></li>
-          <li><a href="about.html" style="color: white; text-decoration: none;">About Us</a></li>
-          <li><a href="contact.html" style="color: white; text-decoration: none;">Contact</a></li>
-        </ul>
-      </div>
-      <div style="flex: 1; min-width: 200px;">
-        <h4>Newsletter</h4>
-        <input id="subscriberEmail" type="email" placeholder="Your email" style="padding: 8px; width: 100%; border: none; border-radius: 4px; margin-bottom: 10px;" />
-    <button onclick="subscribe()" style="padding: 10px 15px; background-color: #f57c00; border: none; border-radius: 4px; color: white; cursor: pointer;">Subscribe</button>
-      </div>
-    </div>
-    <div style="text-align: center; margin-top: 20px;">
-      &copy; 2025 Samuwa EducaNews. All rights reserved.
-    </div>
-  </footer>
-
-  <script>
-    function subscribe() {
-      const emailInput = document.getElementById('subscriberEmail');
-      const email = emailInput.value.trim();
-      if (!email) {
-        alert('Please enter a valid email address.');
-        return;
-      }
-      // Here you can add Firestore or API integration to store email
-      alert(`Thank you for subscribing, ${email}!`);
-      emailInput.value = '';
-    }
-  </script>
+    const firstImage = (post.article?.match(/<img[^>]+src="([^">]+)"/) || [])[1] || "";
+    const card = document.createElement("a");
+    card.href = `/post.html?id=${post.id}`;
+    card.className = "post-card";
+    card.innerHTML = `
+      ${firstImage ? `<img src="${firstImage}" alt="${post.title}">` : ""}
+      <div class="post-title">${post.title}</div>
+      <div class="post-desc">${post.article?.replace(/<[^>]+>/g, "").split(" ").slice(0,20).join(" ")}...</div>
+    `;
+    scroller.appendChild(card);
+  });
+}
+</script>
 
 </body>
 </html>
