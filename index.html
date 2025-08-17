@@ -1,31 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head>  
   <meta charset="UTF-8" />
-  <title>Samuwa EducaNews</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
-    header { background: #0d47a1; color: white; padding: 1rem; text-align: center; }
-    .category-title { color: white; padding: 0.5rem; font-weight: bold; }
-    section { margin: 1rem; padding: 1rem; background: white; border-radius: 8px; }
-    .post-card { border-bottom: 1px solid #ddd; padding: 1rem 0; }
-    .post-card img { max-width: 100%; border-radius: 8px; margin-bottom: 0.5rem; }
-    .post-title { font-size: 1.2rem; font-weight: bold; margin: 0.5rem 0; }
-    a { color: #007bff; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .skeleton { height: 60px; background: #eee; border-radius: 4px; margin: 0.5rem 0; }
-    #breakingNews { background: #ff9800; color: white; padding: 0.5rem; text-align: center; }
-    #breakingNews a { color: white; margin: 0 0.5rem; }
-  </style>
+  <title>Samuwa EducaNews – Learn, Read & Explore</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
+  <style>
+    html, body { margin: 0; padding: 0; font-family: 'Roboto', sans-serif; background: #f4f6f9; overflow-x: hidden; max-width: 100%; }
+    * { box-sizing: border-box; }
+
+    /* Header */
+    header { background-color: #007bff; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: white; }
+    .logo { display: flex; align-items: center; font-family: 'Times New Roman', serif; font-size: 24px; font-weight: bold; }
+    .logo img { height: 60px; width: 60px; margin-right: 10px; border-radius: 6px; }
+    .hamburger { font-size: 28px; cursor: pointer; }
+
+    .menu { display: none; background: #0056b3; padding: 10px; }
+    .menu a { display: block; color: white; text-decoration: none; margin-bottom: 8px; }
+    .menu a:hover { text-decoration: underline; }
+
+    /* Breaking News Ticker (now BELOW header) */
+    .ticker { background-color: #c2185b; color: white; padding: 5px 0; font-size: 14px; display: flex; align-items: center; overflow: hidden; }
+    .ticker-label { background: #f57c00; padding: 5px 10px; font-weight: bold; margin-right: 10px; white-space: nowrap; }
+    .ticker-content { flex: 1; overflow: hidden; }
+    .ticker-content .line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 4px 0; }
+    .ticker-content a { color: white; text-decoration: none; margin-right: 30px; }
+    .ticker-content a:hover { text-decoration: underline; }
+
+    .category-title { font-size: 28px; font-weight: bold; padding: 10px; border-radius: 6px; margin: 40px 0 10px; color: #fff; }
+    .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+    .post-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,.08); padding: 20px; margin-bottom: 30px; transition: transform 0.2s; }
+    .post-card:hover { transform: translateY(-3px); }
+    .post-title { font-size: 24px; font-weight: bold; color: #2e2e2e; margin-bottom: 10px; }
+    img { max-width: 100%; border-radius: 8px; margin-bottom: 10px; }
+
+    /* Skeleton loader */
+    .skeleton { animation: pulse 1.2s ease-in-out infinite; background: #eee; border-radius: 8px; margin: 12px 0; height: 100px; }
+    @keyframes pulse { 0% {opacity:.6} 50% {opacity:1} 100% {opacity:.6} }
+
+    footer { background-color: #0d47a1; color: white; padding: 40px 20px; font-family: Arial, sans-serif; margin-top: 40px; }
+    footer a { color: white; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <img src="https://res.cloudinary.com/dkoagpcul/image/upload/v1753858825/file_000000008bd461f489ab78e732435eba_tiqllb.png" alt="Samuwa Logo">
+      Samuwa EducaNews
+    </div>
+    <div class="hamburger" onclick="toggleMenu()" role="button" aria-controls="categoryMenu" aria-expanded="false" tabindex="0"
+         onkeydown="if(event.key==='Enter'||event.key===' ') toggleMenu()">
+      &#9776;
+    </div>
+  </header>
+
+  <!-- Ticker BELOW header -->
+  <div class="ticker">
+    <div class="ticker-label">Breaking News</div>
+    <div class="ticker-content" id="breakingNews">
+      <div class="line">Loading…</div>
+    </div>
+  </div>
+
+  <!-- Menu -->
+  <div class="menu" id="categoryMenu">
+    <a href="#news">News</a>
+    <a href="#sports">Sports</a>
+    <a href="#blogs">Blogs</a>
+    <a href="#business">Business</a>
+    <a href="#courses">Courses</a>
+    <a href="#funny">Funny</a>
+    <a href="#inspire me">Inspire Me</a>
+    <a href="dev.html">Donate</a>
+  </div>
+
+  <div class="container" id="contentArea"></div>
+
+  <!-- Firestore (modular lite) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getFirestore, collection, getDocs, query, orderBy, limit
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-lite.js";
+    import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-lite.js";
 
-    // Firebase setup
+    window.toggleMenu = function () {
+      const menu = document.getElementById("categoryMenu");
+      const isOpen = menu.style.display === "block";
+      menu.style.display = isOpen ? "none" : "block";
+      const btn = document.querySelector(".hamburger");
+      if (btn) btn.setAttribute("aria-expanded", String(!isOpen));
+    };
+
     const firebaseConfig = {
       apiKey: "AIzaSyAwAxP-MWwNnKP59PA6joil4Ceq10eozlc",
       authDomain: "wafula-s-educational-posts.firebaseapp.com",
@@ -38,7 +105,7 @@
     const categories = ["news", "sports", "business", "courses", "funny", "inspire me", "blogs"];
     const colors = ["#00796b", "#6a1b9a", "#f57c00", "#1976d2", "#c2185b", "#2e7d32"];
 
-    // Render empty sections
+    // Sections
     categories.forEach((cat, i) => {
       const section = document.createElement("section");
       section.id = cat;
@@ -47,15 +114,26 @@
       h2.style.backgroundColor = colors[i % colors.length];
       h2.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
       section.appendChild(h2);
-      section.appendChild(Object.assign(document.createElement("div"), {className:"skeleton"}));
+      const skel = document.createElement("div");
+      skel.className = "skeleton";
+      section.appendChild(skel);
       contentArea.appendChild(section);
     });
 
-    // Fetch posts
+    // Fetch + render posts
     async function fetchPosts() {
-      const q = query(collection(db, "posts"), orderBy("timestamp", "desc"), limit(30));
-      const snap = await getDocs(q);
-      renderPosts(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      try {
+        const qPosts = query(collection(db, "posts"), orderBy("timestamp", "desc"), limit(30));
+        const snap = await getDocs(qPosts);
+        const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderPosts(data);
+      } catch (e) {
+        console.error("Error fetching posts:", e);
+      }
+    }
+
+    function safeExcerpt(html, words = 30) {
+      return (html || "").replace(/<[^>]+>/g, "").split(/\s+/).slice(0, words).join(" ");
     }
 
     function renderPosts(posts) {
@@ -64,38 +142,94 @@
         const section = document.getElementById(cat);
         if (!section) return;
         section.querySelectorAll(".skeleton").forEach(el => el.remove());
+
         const card = document.createElement("div");
         card.className = "post-card";
+
         const firstImage = (post.article?.match(/<img[^>]+src="([^">]+)"/) || [])[1] || "";
+        const url = post.slug
+          ? `/posts/${encodeURIComponent(post.slug)}`
+          : `/post.html?id=${post.id}`;
+
         card.innerHTML = `
-          ${firstImage ? `<img src="${firstImage}" alt="${post.title}">` : ""}
-          <div class="post-title">${post.title}</div>
-          <div>${post.article?.replace(/<[^>]+>/g, "").split(" ").slice(0, 25).join(" ")}...</div>
-          <a href="/posts/${post.slug}">Read More</a>
+          ${firstImage ? `<img src="${firstImage}" alt="${post.title || ""}">` : ""}
+          <div class="post-title">${post.title || "Untitled"}</div>
+          <div>${safeExcerpt(post.article, 30)}...</div>
+          <a href="${url}" style="color:#007bff">Read More</a>
         `;
         section.appendChild(card);
       });
     }
 
+    // Breaking news (top 5)
     async function fetchBreakingNews() {
-      const q = query(collection(db, "posts"), orderBy("timestamp", "desc"), limit(5));
-      const snap = await getDocs(q);
-      const data = snap.docs.map(doc => ({ slug: doc.data().slug, title: doc.data().title }));
-      const marquee = document.getElementById("breakingNews");
-      marquee.innerHTML = data.map(d => `<a href="/posts/${d.slug}">${d.title}</a>`).join(" • ");
+      try {
+        const qTop = query(collection(db, "posts"), orderBy("timestamp", "desc"), limit(5));
+        const snap = await getDocs(qTop);
+        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const container = document.getElementById("breakingNews");
+        container.innerHTML = "";
+        const line = document.createElement("div");
+        line.className = "line";
+        line.innerHTML = items.map(d => {
+          const link = d.slug ? `/posts/${encodeURIComponent(d.slug)}` : `/post.html?id=${d.id}`;
+          return `<a href="${link}">${d.title || "Untitled"}</a>`;
+        }).join(" • ");
+        container.appendChild(line);
+      } catch (e) {
+        console.error("Error fetching breaking news:", e);
+      }
     }
 
     fetchPosts();
     fetchBreakingNews();
   </script>
-</head>
-<body>
-  <header>
-    <h1>Samuwa EducaNews</h1>
-  </header>
 
-  <div id="breakingNews">Loading breaking news...</div>
+  <!-- Footer -->
+  <footer>
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: auto;">
+      <div style="flex: 1; min-width: 200px;">
+        <h3 style="font-family: 'Times New Roman', serif;">Samuwa EducaNews</h3>
+        <p>Empowering students, teachers, and readers with quality educational content and news updates.</p>
+      </div>
+      <div style="flex: 1; min-width: 200px;">
+        <h4>Quick Links</h4>
+        <ul style="list-style: none; padding: 0;">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="article.html">Latest Articles</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="contac.html">Contact</a></li>
+        </ul>
+      </div>
+      <div style="flex: 1; min-width: 200px;">
+        <h4>Newsletter</h4>
+        <p>Stay updated! Get the latest posts delivered to your inbox.</p>
+        <input id="subscriberEmail" type="email" placeholder="Your email" style="padding: 8px; width: 100%; border: none; border-radius: 4px; margin-bottom: 10px;" />
+        <button onclick="subscribe()" style="padding: 10px; width: 100%; background-color: #2196f3; color: white; border: none; border-radius: 4px;">Subscribe</button>
+      </div>
+      <div style="flex: 1; min-width: 200px;">
+        <h4>Follow Us</h4>
+        <p>
+          <a href="https://www.facebook.com/profile.php?id=61578932424898" style="margin-right: 10px;">Facebook</a>
+          <a href="#" style="margin-right: 10px;">Twitter</a>
+          <a href="#">YouTube</a>
+        </p>
+      </div>
+    </div>
+    <hr style="border-color: rgba(255,255,255,0.2); margin: 20px 0;" />
+    <div style="text-align: center; font-size: 14px;">&copy; 2025 Samuwa EducaNews. All rights reserved.</div>
+  </footer>
 
-  <main id="contentArea"></main>
+  <script>
+    function subscribe() {
+      const email = document.getElementById("subscriberEmail").value.trim();
+      if (email) {
+        alert(`Thank you for subscribing! You'll receive updates to ${email}`);
+        document.getElementById("subscriberEmail").value = "";
+      } else {
+        alert("Please enter your email address.");
+      }
+    }
+  </script>
 </body>
 </html>
