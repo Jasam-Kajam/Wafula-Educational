@@ -1,5 +1,5 @@
 {
-  "routes": [
-    { "src": "/posts/.*", "dest": "/post.html" }
+  "redirects": [
+    { "source": "/posts/*", "destination": "/post.html", "type": 200 }
   ]
 }
