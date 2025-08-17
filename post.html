@@ -5,60 +5,28 @@
   <title>Post | Samuwa EducaNews</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body {
-      font-family: Georgia, serif;
-      max-width: 800px;
-      margin: auto;
-      padding: 20px;
-      background: #f5f5f5;
-    }
-    #coverImage {
-      width: 100%;
-      max-height: 400px;
-      object-fit: cover;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      display: none;
-    }
-    h1 {
-      font-size: 2.2em;
-      color: #0d47a1;
-      border-bottom: 3px solid #0d47a1;
-      padding-bottom: 10px;
-    }
-    .post-category {
-      background: #ff6f00;
-      color: white;
-      padding: 6px 12px;
-      border-radius: 20px;
-      display: inline-block;
-      margin: 10px 0;
-    }
-    .post-meta {
-      font-size: 0.9em;
-      color: #666;
-      margin-bottom: 20px;
-    }
-    iframe, img, video {
-      max-width: 100%;
-      border-radius: 6px;
-      margin: 10px 0;
-    }
+    body { font-family: Georgia, serif; max-width: 800px; margin: auto; padding: 20px; background: #f5f5f5; color:#333; }
+    #coverImage { width: 100%; max-height: 400px; object-fit: cover; margin-bottom: 20px; border-radius: 8px; display: none; }
+    h1 { font-size: 2.2em; color: #0d47a1; border-bottom: 3px solid #0d47a1; padding-bottom: 10px; margin: 0 0 10px; }
+    .post-category { background: #ff6f00; color: white; padding: 6px 12px; border-radius: 20px; display: inline-block; margin: 10px 0; }
+    .post-meta { font-size: 0.9em; color: #666; margin-bottom: 20px; }
+    iframe, img, video { max-width: 100%; border-radius: 6px; margin: 10px 0; }
+    .error { background:#ffe6e6; color:#b00020; padding:10px; border-radius:8px; margin:10px 0; }
   </style>
 
-  <!-- Firebase compat (easier Firestore queries) -->
+  <!-- Firebase compat (simple Firestore API) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
-  <img id="coverImage" />
+  <img id="coverImage" alt="Cover">
   <h1 id="postTitle">Loading...</h1>
   <div class="post-category" id="postCategory"></div>
   <div class="post-meta" id="postMeta"></div>
   <div id="postContent"></div>
+  <div id="errorBox" class="error" style="display:none;"></div>
 
   <script>
-    // Firebase setup
     const firebaseConfig = {
       apiKey: "AIzaSyAwAxP-MWwNnKP59PA6joil4Ceq10eozlc",
       authDomain: "wafula-s-educational-posts.firebaseapp.com",
@@ -67,45 +35,129 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Get slug from URL (/posts/slug)
-    const slug = window.location.pathname.split("/").pop();
+    function showError(msg) {
+      const box = document.getElementById('errorBox');
+      box.textContent = msg;
+      box.style.display = 'block';
+    }
 
-    if (!slug) {
-      document.getElementById("postTitle").textContent = "No slug provided.";
-    } else {
-      db.collection("posts").where("slug", "==", slug).limit(1).get()
-        .then(snapshot => {
-          if (snapshot.empty) {
+    function formatViews(num) {
+      if (typeof num !== "number") return "0";
+      if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + "M";
+      if (num >= 1_000) return (num / 1_000).toFixed(1) + "K";
+      return String(num);
+    }
+
+    function formatDateFromPost(post) {
+      // support Firestore Timestamp, millis, ISO string, or missing
+      try {
+        if (post.timestamp && typeof post.timestamp.toDate === 'function') {
+          return post.timestamp.toDate().toLocaleDateString();
+        }
+        if (post.timestamp?.seconds) {
+          return new Date(post.timestamp.seconds * 1000).toLocaleDateString();
+        }
+        if (post.date) {
+          const d = new Date(post.date);
+          if (!isNaN(d)) return d.toLocaleDateString();
+        }
+      } catch(e){}
+      return new Date().toLocaleDateString();
+    }
+
+    async function loadPost() {
+      // Prefer slug from path: /posts/<slug>
+      const path = window.location.pathname.replace(/\/+$/, ""); // trim trailing slash
+      const slugRaw = path.split("/").pop() || "";
+      const slug = decodeURIComponent(slugRaw);
+
+      // Fallback: ?id=<docId> (for older links)
+      const params = new URLSearchParams(window.location.search);
+      const idParam = params.get("id");
+
+      let docSnap = null;
+      let postId = null;
+      let post = null;
+
+      try {
+        if (idParam) {
+          const byId = await db.collection("posts").doc(idParam).get();
+          if (byId.exists) {
+            docSnap = byId;
+            postId = byId.id;
+            post = byId.data();
+          } else {
+            showError("Post not found by id.");
             document.getElementById("postTitle").textContent = "Post not found.";
             return;
           }
-          const post = snapshot.docs[0].data();
-
-          // Title
-          document.getElementById("postTitle").textContent = post.title || "Untitled";
-
-          // Category
-          document.getElementById("postCategory").textContent = post.category || "Uncategorized";
-
-          // Meta (author + date)
-          document.getElementById("postMeta").textContent =
-            `By ${post.author || "Unknown"} • ${new Date(post.timestamp?.seconds * 1000 || Date.now()).toLocaleDateString()}`;
-
-          // Cover Image
-          if (post.cover) {
-            const coverImage = document.getElementById("coverImage");
-            coverImage.src = post.cover;
-            coverImage.style.display = "block";
+        } else if (slug) {
+          const bySlug = await db.collection("posts").where("slug", "==", slug).limit(1).get();
+          if (!bySlug.empty) {
+            docSnap = bySlug.docs[0];
+            postId = docSnap.id;
+            post = docSnap.data();
+          } else {
+            showError("Post not found for slug: " + slug);
+            document.getElementById("postTitle").textContent = "Post not found.";
+            return;
           }
+        } else {
+          showError("No slug or id provided in the URL.");
+          document.getElementById("postTitle").textContent = "No post specified.";
+          return;
+        }
 
-          // Article body
-          document.getElementById("postContent").innerHTML = post.article || "";
-        })
-        .catch(err => {
-          console.error(err);
-          document.getElementById("postTitle").textContent = "Error loading post.";
-        });
+        // Render content
+        document.getElementById("postTitle").textContent = post.title || "Untitled";
+        document.getElementById("postCategory").textContent = post.category || "Uncategorized";
+
+        // Optional: increment views (ignore errors if rules block writes)
+        let viewsText = "";
+        try {
+          const viewsRef = db.collection("views").doc(postId);
+          await viewsRef.set({ count: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+          const vDoc = await viewsRef.get();
+          const count = vDoc.exists ? (vDoc.data().count || 1) : 1;
+          viewsText = ` • ${formatViews(count)} views`;
+        } catch(e) {
+          // If permission denied, just skip views
+        }
+
+        const dateText = formatDateFromPost(post);
+        const author = post.author || "Unknown Author";
+        document.getElementById("postMeta").textContent = `By ${author} • ${dateText}${viewsText}`;
+
+        if (post.cover) {
+          const cover = document.getElementById("coverImage");
+          cover.src = post.cover;
+          cover.style.display = "block";
+        }
+
+        // Render article + optional file URL
+        let html = post.article || "";
+        if (post.url) {
+          const ext = post.url.split('.').pop().split('?')[0].toLowerCase();
+          if (ext === "pdf") {
+            html += `<iframe src="${post.url}" height="450"></iframe>`;
+          } else if (["jpg","jpeg","png","gif","webp"].includes(ext)) {
+            html += `<img src="${post.url}" alt="">`;
+          } else if (["mp4","webm"].includes(ext)) {
+            html += `<video controls style="width:100%"><source src="${post.url}" type="video/${ext}"></video>`;
+          } else {
+            html += `<p><a href="${post.url}" target="_blank" rel="noopener">Open Attachment</a></p>`;
+          }
+        }
+        document.getElementById("postContent").innerHTML = html;
+
+      } catch (err) {
+        console.error(err);
+        showError(err?.message || "Error loading post.");
+        document.getElementById("postTitle").textContent = "Error loading post.";
+      }
     }
+
+    loadPost();
   </script>
 </body>
 </html>
