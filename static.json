@@ -1,8 +1,5 @@
 {
   "routes": [
-    {
-      "src": "/posts/.*",
-      "dest": "/post.html"
-    }
+    { "src": "/posts/.*", "dest": "/post.html" }
   ]
 }
