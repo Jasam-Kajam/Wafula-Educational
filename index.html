@@ -5,28 +5,27 @@
   <title>Samuwa EducaNews</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-    header { background: #0d47a1; color: #fff; padding: 1rem; }
-    .category-title { color: #fff; padding: 8px; font-weight: bold; }
-    .post-card { border: 1px solid #ddd; border-radius: 6px; padding: 1rem; margin: 1rem 0; }
-    .post-card img { max-width: 100%; border-radius: 6px; }
-    #breakingNews { background: #ff6f00; color: #fff; padding: 0.5rem; }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
+    header { background: #0d47a1; color: white; padding: 1rem; text-align: center; }
+    .category-title { color: white; padding: 0.5rem; font-weight: bold; }
+    section { margin: 1rem; padding: 1rem; background: white; border-radius: 8px; }
+    .post-card { border-bottom: 1px solid #ddd; padding: 1rem 0; }
+    .post-card img { max-width: 100%; border-radius: 8px; margin-bottom: 0.5rem; }
+    .post-title { font-size: 1.2rem; font-weight: bold; margin: 0.5rem 0; }
+    a { color: #007bff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .skeleton { height: 60px; background: #eee; border-radius: 4px; margin: 0.5rem 0; }
+    #breakingNews { background: #ff9800; color: white; padding: 0.5rem; text-align: center; }
+    #breakingNews a { color: white; margin: 0 0.5rem; }
   </style>
-</head>
-<body>
-  <header>
-    <h1>Samuwa EducaNews</h1>
-  </header>
-
-  <!-- Breaking News -->
-  <div id="breakingNews">Loading latest news...</div>
-
-  <main id="contentArea"></main>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-lite.js";
+    import {
+      getFirestore, collection, getDocs, query, orderBy, limit
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-lite.js";
 
+    // Firebase setup
     const firebaseConfig = {
       apiKey: "AIzaSyAwAxP-MWwNnKP59PA6joil4Ceq10eozlc",
       authDomain: "wafula-s-educational-posts.firebaseapp.com",
@@ -39,6 +38,7 @@
     const categories = ["news", "sports", "business", "courses", "funny", "inspire me", "blogs"];
     const colors = ["#00796b", "#6a1b9a", "#f57c00", "#1976d2", "#c2185b", "#2e7d32"];
 
+    // Render empty sections
     categories.forEach((cat, i) => {
       const section = document.createElement("section");
       section.id = cat;
@@ -47,25 +47,15 @@
       h2.style.backgroundColor = colors[i % colors.length];
       h2.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
       section.appendChild(h2);
+      section.appendChild(Object.assign(document.createElement("div"), {className:"skeleton"}));
       contentArea.appendChild(section);
     });
 
-    fetchPosts();
-    fetchBreakingNews();
-
+    // Fetch posts
     async function fetchPosts() {
       const q = query(collection(db, "posts"), orderBy("timestamp", "desc"), limit(30));
       const snap = await getDocs(q);
-      const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      renderPosts(data);
-    }
-
-    async function fetchBreakingNews() {
-      const q = query(collection(db, "posts"), orderBy("timestamp", "desc"), limit(5));
-      const snap = await getDocs(q);
-      const data = snap.docs.map(doc => ({ slug: doc.data().slug, title: doc.data().title }));
-      const marquee = document.getElementById("breakingNews");
-      marquee.innerHTML = data.map(d => `<a href="/posts/${d.slug}" style="color:white">${d.title}</a>`).join(" • ");
+      renderPosts(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     }
 
     function renderPosts(posts) {
@@ -73,18 +63,39 @@
         const cat = (post.category || "uncategorized").toLowerCase();
         const section = document.getElementById(cat);
         if (!section) return;
+        section.querySelectorAll(".skeleton").forEach(el => el.remove());
         const card = document.createElement("div");
         card.className = "post-card";
-        const firstImage = (post.article?.match(/<img[^>]+src="([^">]+)"/) || [])[1] || post.cover || "";
+        const firstImage = (post.article?.match(/<img[^>]+src="([^">]+)"/) || [])[1] || "";
         card.innerHTML = `
           ${firstImage ? `<img src="${firstImage}" alt="${post.title}">` : ""}
-          <h3>${post.title}</h3>
-          <p>${post.article?.replace(/<[^>]+>/g, "").split(" ").slice(0, 30).join(" ")}...</p>
-          <a href="/posts/${post.slug}" style="color:#007bff">Read More</a>
+          <div class="post-title">${post.title}</div>
+          <div>${post.article?.replace(/<[^>]+>/g, "").split(" ").slice(0, 25).join(" ")}...</div>
+          <a href="/posts/${post.slug}">Read More</a>
         `;
         section.appendChild(card);
       });
     }
+
+    async function fetchBreakingNews() {
+      const q = query(collection(db, "posts"), orderBy("timestamp", "desc"), limit(5));
+      const snap = await getDocs(q);
+      const data = snap.docs.map(doc => ({ slug: doc.data().slug, title: doc.data().title }));
+      const marquee = document.getElementById("breakingNews");
+      marquee.innerHTML = data.map(d => `<a href="/posts/${d.slug}">${d.title}</a>`).join(" • ");
+    }
+
+    fetchPosts();
+    fetchBreakingNews();
   </script>
+</head>
+<body>
+  <header>
+    <h1>Samuwa EducaNews</h1>
+  </header>
+
+  <div id="breakingNews">Loading breaking news...</div>
+
+  <main id="contentArea"></main>
 </body>
 </html>
