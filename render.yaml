@@ -1,0 +1,9 @@
+# render.yaml
+services:
+  - type: web
+    name: pulsy-web
+    env: static
+    staticPublishPath: .
+    routes:
+      - path: /posts/*
+        rewrite: /post.html
